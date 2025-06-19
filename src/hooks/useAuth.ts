@@ -55,10 +55,16 @@ export function useAuth() {
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Error fetching profile:', error);
+        return;
+      }
+
+      // If no profile exists, create one
+      if (!data) {
+        await createProfile(userId);
         return;
       }
 
@@ -67,6 +73,33 @@ export function useAuth() {
       console.error('Error fetching profile:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const createProfile = async (userId: string) => {
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) return;
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .insert({
+          id: userId,
+          email: userData.user.email!,
+          full_name: userData.user.user_metadata?.full_name || null,
+          role: 'author', // Default role
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating profile:', error);
+        return;
+      }
+
+      setProfile(data);
+    } catch (error) {
+      console.error('Error creating profile:', error);
     }
   };
 
@@ -109,22 +142,6 @@ export function useAuth() {
       if (error) {
         toast.error(error.message);
         return { success: false, error };
-      }
-
-      // Create profile
-      if (data.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: data.user.id,
-            email: data.user.email!,
-            full_name: fullName,
-            role: 'author', // Default role
-          });
-
-        if (profileError) {
-          console.error('Error creating profile:', profileError);
-        }
       }
 
       toast.success('Account created successfully!');
