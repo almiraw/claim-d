@@ -7,9 +7,16 @@ import About from './pages/About';
 import Portfolio from './pages/Portfolio';
 import InstagramFeed from './pages/InstagramFeed';
 import Contact from './pages/Contact';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
+
+// Admin Pages
+import AdminDashboard from './pages/admin/AdminDashboard';
+import PostsManager from './pages/admin/PostsManager';
+import PostEditor from './components/admin/PostEditor';
 
 // Components
-import Header from './components/layout/Header';
+import DynamicHeader from './components/layout/DynamicHeader';
 import Footer from './components/layout/Footer';
 import NewsletterPopup from './components/ui/NewsletterPopup';
 
@@ -38,20 +45,35 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen flex flex-col bg-neutral-50 text-neutral-900">
-        <Header />
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/instagram" element={<InstagramFeed />} />
-            <Route path="/contact" element={<Contact />} />
-          </Routes>
-        </main>
-        <Footer />
-        {showNewsletterPopup && (
-          <NewsletterPopup onClose={handleClosePopup} />
-        )}
+        <Routes>
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/posts" element={<PostsManager />} />
+          <Route path="/admin/posts/new" element={<PostEditor />} />
+          <Route path="/admin/posts/:id/edit" element={<PostEditor />} />
+          
+          {/* Public Routes */}
+          <Route path="/*" element={
+            <>
+              <DynamicHeader />
+              <main className="flex-grow">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/portfolio" element={<Portfolio />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/blog/:slug" element={<BlogPost />} />
+                  <Route path="/instagram" element={<InstagramFeed />} />
+                  <Route path="/contact" element={<Contact />} />
+                </Routes>
+              </main>
+              <Footer />
+              {showNewsletterPopup && (
+                <NewsletterPopup onClose={handleClosePopup} />
+              )}
+            </>
+          } />
+        </Routes>
       </div>
     </Router>
   );
