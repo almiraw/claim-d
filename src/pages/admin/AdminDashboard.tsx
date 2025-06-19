@@ -30,10 +30,29 @@ const AdminDashboard: React.FC = () => {
   const fetchDashboardData = async () => {
     try {
       // Fetch posts stats
-      const { data: posts } = await supabase
+      const { data: posts, error } = await supabase
         .from('posts')
-        .select('status, view_count, title, created_at, author:profiles(full_name)')
+        .select(`
+          status, 
+          view_count, 
+          title, 
+          created_at,
+          author:profiles(full_name)
+        `)
         .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching posts:', error);
+        // Don't throw error, just use empty data
+        setStats({
+          totalPosts: 0,
+          publishedPosts: 0,
+          draftPosts: 0,
+          totalViews: 0,
+        });
+        setRecentPosts([]);
+        return;
+      }
 
       if (posts) {
         const totalPosts = posts.length;
@@ -52,6 +71,14 @@ const AdminDashboard: React.FC = () => {
       }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
+      // Set default empty state
+      setStats({
+        totalPosts: 0,
+        publishedPosts: 0,
+        draftPosts: 0,
+        totalViews: 0,
+      });
+      setRecentPosts([]);
     } finally {
       setLoading(false);
     }
@@ -94,11 +121,13 @@ const AdminDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <AdminLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="w-8 h-8 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin" />
-        </div>
-      </AdminLayout>
+      <AuthGuard requireAuthor>
+        <AdminLayout>
+          <div className="flex items-center justify-center h-64">
+            <div className="w-8 h-8 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin" />
+          </div>
+        </AdminLayout>
+      </AuthGuard>
     );
   }
 
@@ -166,30 +195,31 @@ const AdminDashboard: React.FC = () => {
                 </Link>
               </div>
               <div className="space-y-3">
-                {recentPosts.map((post) => (
-                  <div key={post.id} className="flex items-center justify-between py-2">
-                    <div className="flex-1">
-                      <h3 className="text-sm font-medium text-gray-900 truncate">
-                        {post.title}
-                      </h3>
-                      <p className="text-xs text-gray-500">
-                        {post.status === 'published' ? 'Published' : 'Draft'} • 
-                        {post.author?.full_name} • 
-                        {format(new Date(post.created_at), 'MMM d, yyyy')}
-                      </p>
+                {recentPosts.length > 0 ? (
+                  recentPosts.map((post) => (
+                    <div key={post.id || Math.random()} className="flex items-center justify-between py-2">
+                      <div className="flex-1">
+                        <h3 className="text-sm font-medium text-gray-900 truncate">
+                          {post.title}
+                        </h3>
+                        <p className="text-xs text-gray-500">
+                          {post.status === 'published' ? 'Published' : 'Draft'} • 
+                          {post.author?.full_name || 'Unknown'} • 
+                          {format(new Date(post.created_at), 'MMM d, yyyy')}
+                        </p>
+                      </div>
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${
+                          post.status === 'published'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}
+                      >
+                        {post.status}
+                      </span>
                     </div>
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        post.status === 'published'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-yellow-100 text-yellow-800'
-                      }`}
-                    >
-                      {post.status}
-                    </span>
-                  </div>
-                ))}
-                {recentPosts.length === 0 && (
+                  ))
+                ) : (
                   <p className="text-gray-500 text-sm">No posts yet. Create your first post!</p>
                 )}
               </div>

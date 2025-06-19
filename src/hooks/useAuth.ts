@@ -57,14 +57,38 @@ export function useAuth() {
         .eq('id', userId)
         .maybeSingle();
 
-      if (error) {
+      if (error && error.code !== 'PGRST116') {
         console.error('Error fetching profile:', error);
+        toast.error('Error loading profile');
         return;
       }
 
-      setProfile(data);
+      if (!data) {
+        // Profile doesn't exist, create one
+        const { data: newProfile, error: createError } = await supabase
+          .from('profiles')
+          .insert({
+            id: userId,
+            email: user?.email || '',
+            full_name: user?.user_metadata?.full_name || 'Admin User',
+            role: 'admin'
+          })
+          .select()
+          .single();
+
+        if (createError) {
+          console.error('Error creating profile:', createError);
+          toast.error('Error creating profile');
+          return;
+        }
+
+        setProfile(newProfile);
+      } else {
+        setProfile(data);
+      }
     } catch (error) {
       console.error('Error fetching profile:', error);
+      toast.error('Error loading profile');
     } finally {
       setLoading(false);
     }
