@@ -14,6 +14,9 @@ if (!supabaseAnonKey || supabaseAnonKey === 'your_supabase_anon_key') {
   console.log('Please set your Supabase Anon Key in the .env file');
 }
 
+// Declare supabase variable at top level
+let supabase;
+
 // Only create client if we have valid environment variables
 if (!supabaseUrl || !supabaseAnonKey || 
     supabaseUrl === 'your_supabase_project_url' || 
@@ -27,9 +30,9 @@ if (!supabaseUrl || !supabaseAnonKey ||
   console.log('5. Update the .env file with these values');
   
   // Create a dummy client to prevent crashes
-  export const supabase = createClient('https://placeholder.supabase.co', 'placeholder-key');
+  supabase = createClient('https://placeholder.supabase.co', 'placeholder-key');
 } else {
-  export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  supabase = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
@@ -204,3 +207,6 @@ export interface Database {
     };
   };
 }
+
+// Export the supabase client
+export { supabase };
