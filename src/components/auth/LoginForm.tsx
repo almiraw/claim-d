@@ -11,10 +11,9 @@ interface LoginFormData {
 
 interface LoginFormProps {
   onSuccess?: () => void;
-  onToggleMode?: () => void;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onToggleMode }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   const [showPassword, setShowPassword] = useState(false);
   const { signIn, loading } = useAuth();
   
@@ -22,7 +21,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onToggleMode }) => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>();
+  } = useForm<LoginFormData>({
+    defaultValues: {
+      email: 'admin@reclaimd.com',
+      password: 'admin123456'
+    }
+  });
 
   const onSubmit = async (data: LoginFormData) => {
     const result = await signIn(data.email, data.password);
@@ -34,8 +38,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onToggleMode }) => {
   return (
     <div className="w-full max-w-md mx-auto">
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-serif mb-2">Welcome Back</h2>
-        <p className="text-neutral-600">Sign in to access your admin panel</p>
+        <h2 className="text-2xl font-serif mb-2">Admin Login</h2>
+        <p className="text-neutral-600">Sign in to access the CMS</p>
+      </div>
+
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <h3 className="text-sm font-medium text-blue-900 mb-2">Default Admin Credentials:</h3>
+        <div className="text-sm text-blue-800">
+          <p><strong>Email:</strong> admin@reclaimd.com</p>
+          <p><strong>Password:</strong> admin123456</p>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -110,19 +122,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onToggleMode }) => {
         </Button>
       </form>
 
-      {onToggleMode && (
-        <div className="mt-6 text-center">
-          <p className="text-neutral-600">
-            Don't have an account?{' '}
-            <button
-              onClick={onToggleMode}
-              className="text-neutral-900 hover:text-neutral-700 font-medium"
-            >
-              Sign up
-            </button>
-          </p>
-        </div>
-      )}
+      <div className="mt-6 text-center">
+        <p className="text-sm text-neutral-500">
+          This is an admin-only content management system.
+        </p>
+      </div>
     </div>
   );
 };

@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import LoginForm from '../../components/auth/LoginForm';
-import SignUpForm from '../../components/auth/SignUpForm';
 import Logo from '../../components/ui/Logo';
 
 const AuthPage: React.FC = () => {
-  const [isLogin, setIsLogin] = useState(true);
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -27,16 +25,15 @@ const AuthPage: React.FC = () => {
         <div className="text-center">
           <Logo />
           <h1 className="mt-6 text-3xl font-serif text-neutral-900">
-            Content Management System
+            RE_CLAIM.D CMS
           </h1>
+          <p className="mt-2 text-neutral-600">
+            Content Management System
+          </p>
         </div>
         
         <div className="bg-white py-8 px-6 shadow-lg rounded-lg">
-          {isLogin ? (
-            <LoginForm onToggleMode={() => setIsLogin(false)} />
-          ) : (
-            <SignUpForm onToggleMode={() => setIsLogin(true)} />
-          )}
+          <LoginForm />
         </div>
       </div>
     </div>

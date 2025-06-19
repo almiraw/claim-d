@@ -62,44 +62,11 @@ export function useAuth() {
         return;
       }
 
-      // If no profile exists, create one
-      if (!data) {
-        await createProfile(userId);
-        return;
-      }
-
       setProfile(data);
     } catch (error) {
       console.error('Error fetching profile:', error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const createProfile = async (userId: string) => {
-    try {
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) return;
-
-      const { data, error } = await supabase
-        .from('profiles')
-        .insert({
-          id: userId,
-          email: userData.user.email!,
-          full_name: userData.user.user_metadata?.full_name || null,
-          role: 'author', // Default role
-        })
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Error creating profile:', error);
-        return;
-      }
-
-      setProfile(data);
-    } catch (error) {
-      console.error('Error creating profile:', error);
     }
   };
 
@@ -117,34 +84,6 @@ export function useAuth() {
       }
 
       toast.success('Successfully signed in!');
-      return { success: true, data };
-    } catch (error) {
-      toast.error('An unexpected error occurred');
-      return { success: false, error };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const signUp = async (email: string, password: string, fullName: string) => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-          },
-        },
-      });
-
-      if (error) {
-        toast.error(error.message);
-        return { success: false, error };
-      }
-
-      toast.success('Account created successfully!');
       return { success: true, data };
     } catch (error) {
       toast.error('An unexpected error occurred');
@@ -205,7 +144,6 @@ export function useAuth() {
     session,
     loading,
     signIn,
-    signUp,
     signOut,
     updateProfile,
     isAdmin,
