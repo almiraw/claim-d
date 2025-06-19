@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 
 // Pages
 import Home from './pages/Home';
@@ -10,10 +11,13 @@ import Contact from './pages/Contact';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 
+// Auth Pages
+import AuthPage from './pages/auth/AuthPage';
+
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
 import PostsManager from './pages/admin/PostsManager';
-import PostEditor from './components/admin/PostEditor';
+import PostEditor from './pages/admin/PostEditor';
 
 // Components
 import DynamicHeader from './components/layout/DynamicHeader';
@@ -45,7 +49,35 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen flex flex-col bg-neutral-50 text-neutral-900">
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+            success: {
+              duration: 3000,
+              iconTheme: {
+                primary: '#10B981',
+                secondary: '#fff',
+              },
+            },
+            error: {
+              duration: 4000,
+              iconTheme: {
+                primary: '#EF4444',
+                secondary: '#fff',
+              },
+            },
+          }}
+        />
+        
         <Routes>
+          {/* Auth Routes */}
+          <Route path="/auth/login" element={<AuthPage />} />
+          
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/posts" element={<PostsManager />} />
