@@ -3,11 +3,40 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+// Check if environment variables are set
+if (!supabaseUrl) {
+  console.error('Missing VITE_SUPABASE_URL environment variable');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+if (!supabaseAnonKey) {
+  console.error('Missing VITE_SUPABASE_ANON_KEY environment variable');
+}
+
+// Create a fallback client if env vars are missing (for development)
+const fallbackUrl = 'https://placeholder.supabase.co';
+const fallbackKey = 'placeholder-key';
+
+export const supabase = createClient(
+  supabaseUrl || fallbackUrl, 
+  supabaseAnonKey || fallbackKey,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+    }
+  }
+);
+
+// Test the connection
+supabase.auth.getSession().then(({ data, error }) => {
+  if (error) {
+    console.error('Supabase connection error:', error.message);
+  } else {
+    console.log('Supabase connected successfully');
+  }
+}).catch(err => {
+  console.error('Failed to test Supabase connection:', err);
+});
 
 // Database types
 export interface Database {
