@@ -3,26 +3,20 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Check if environment variables are set
-if (!supabaseUrl || supabaseUrl === 'your_supabase_project_url') {
-  console.error('❌ Missing or invalid VITE_SUPABASE_URL environment variable');
-  console.log('Please set your Supabase URL in the .env file');
-}
-
-if (!supabaseAnonKey || supabaseAnonKey === 'your_supabase_anon_key') {
-  console.error('❌ Missing or invalid VITE_SUPABASE_ANON_KEY environment variable');
-  console.log('Please set your Supabase Anon Key in the .env file');
-}
+// Check if environment variables are properly configured
+const isConfigured = supabaseUrl && 
+  supabaseAnonKey && 
+  supabaseUrl !== 'your_supabase_project_url' && 
+  supabaseUrl !== 'https://your-project.supabase.co' &&
+  supabaseAnonKey !== 'your_supabase_anon_key' &&
+  supabaseAnonKey !== 'your-anon-key-here';
 
 // Declare supabase variable at top level
 let supabase;
 
-// Only create client if we have valid environment variables
-if (!supabaseUrl || !supabaseAnonKey || 
-    supabaseUrl === 'your_supabase_project_url' || 
-    supabaseAnonKey === 'your_supabase_anon_key') {
-  console.error('🚫 Supabase not configured. Please update your .env file with valid credentials.');
-  console.log('📝 Instructions:');
+if (!isConfigured) {
+  console.warn('⚠️ Supabase not configured. Using demo mode.');
+  console.log('📝 To connect to Supabase:');
   console.log('1. Go to https://supabase.com/dashboard');
   console.log('2. Select your project');
   console.log('3. Go to Settings > API');
@@ -207,6 +201,9 @@ export interface Database {
     };
   };
 }
+
+// Helper function to check if Supabase is configured
+export const isSupabaseConfigured = () => isConfigured;
 
 // Export the supabase client
 export { supabase };
