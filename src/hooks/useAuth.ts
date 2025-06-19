@@ -26,8 +26,13 @@ export function useAuth() {
     const initializeAuth = async () => {
       try {
         // Check if Supabase is properly configured
-        if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
-          throw new Error('Supabase configuration missing. Please set up your environment variables.');
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+        
+        if (!supabaseUrl || !supabaseAnonKey || 
+            supabaseUrl === 'your_supabase_project_url' || 
+            supabaseAnonKey === 'your_supabase_anon_key') {
+          throw new Error('Supabase configuration missing. Please set up your environment variables in the .env file.');
         }
 
         // Get initial session
@@ -144,6 +149,18 @@ export function useAuth() {
       setLoading(true);
       setError(null);
       
+      // Check if Supabase is configured before attempting sign in
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      if (!supabaseUrl || !supabaseAnonKey || 
+          supabaseUrl === 'your_supabase_project_url' || 
+          supabaseAnonKey === 'your_supabase_anon_key') {
+        const errorMsg = 'Supabase is not configured. Please set up your environment variables.';
+        toast.error(errorMsg);
+        return { success: false, error: new Error(errorMsg) };
+      }
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -160,7 +177,8 @@ export function useAuth() {
       return { success: true, data };
     } catch (error) {
       console.error('Unexpected sign in error:', error);
-      toast.error('An unexpected error occurred');
+      const errorMsg = error instanceof Error ? error.message : 'An unexpected error occurred';
+      toast.error(errorMsg);
       return { success: false, error };
     } finally {
       setLoading(false);

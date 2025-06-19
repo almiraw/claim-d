@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FileText, Layout, Image, Users, Eye, TrendingUp, Plus } from 'lucide-react';
+import { FileText, Layout, Image, Users, Eye, TrendingUp, Plus, AlertCircle } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import AuthGuard from '../../components/auth/AuthGuard';
 import { supabase } from '../../lib/supabase';
@@ -22,6 +22,7 @@ const AdminDashboard: React.FC = () => {
   });
   const [recentPosts, setRecentPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [connectionError, setConnectionError] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -29,6 +30,18 @@ const AdminDashboard: React.FC = () => {
 
   const fetchDashboardData = async () => {
     try {
+      // Check if Supabase is configured
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      if (!supabaseUrl || !supabaseAnonKey || 
+          supabaseUrl === 'your_supabase_project_url' || 
+          supabaseAnonKey === 'your_supabase_anon_key') {
+        setConnectionError(true);
+        setLoading(false);
+        return;
+      }
+
       // Fetch posts stats
       const { data: posts, error } = await supabase
         .from('posts')
@@ -43,7 +56,7 @@ const AdminDashboard: React.FC = () => {
 
       if (error) {
         console.error('Error fetching posts:', error);
-        // Don't throw error, just use empty data
+        setConnectionError(true);
         setStats({
           totalPosts: 0,
           publishedPosts: 0,
@@ -53,6 +66,8 @@ const AdminDashboard: React.FC = () => {
         setRecentPosts([]);
         return;
       }
+
+      setConnectionError(false);
 
       if (posts) {
         const totalPosts = posts.length;
@@ -71,7 +86,7 @@ const AdminDashboard: React.FC = () => {
       }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
-      // Set default empty state
+      setConnectionError(true);
       setStats({
         totalPosts: 0,
         publishedPosts: 0,
@@ -125,6 +140,77 @@ const AdminDashboard: React.FC = () => {
         <AdminLayout>
           <div className="flex items-center justify-center h-64">
             <div className="w-8 h-8 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin" />
+          </div>
+        </AdminLayout>
+      </AuthGuard>
+    );
+  }
+
+  if (connectionError) {
+    return (
+      <AuthGuard requireAuthor>
+        <AdminLayout>
+          <div className="space-y-6">
+            {/* Connection Error Alert */}
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+              <div className="flex items-start">
+                <AlertCircle className="text-red-600 mr-3 mt-1" size={20} />
+                <div>
+                  <h3 className="text-lg font-semibold text-red-800 mb-2">
+                    Supabase Connection Error
+                  </h3>
+                  <p className="text-red-700 mb-4">
+                    Unable to connect to your Supabase database. Please configure your environment variables.
+                  </p>
+                  <div className="bg-red-100 rounded-md p-4 text-sm text-red-800">
+                    <p className="font-semibold mb-2">To fix this issue:</p>
+                    <ol className="list-decimal list-inside space-y-1">
+                      <li>Go to <a href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer" className="underline">https://supabase.com/dashboard</a></li>
+                      <li>Select your project</li>
+                      <li>Go to Settings → API</li>
+                      <li>Copy your Project URL and anon/public key</li>
+                      <li>Update the .env file with these values</li>
+                      <li>Restart the development server</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Placeholder Dashboard */}
+            <div className="bg-white rounded-lg shadow-sm p-6 opacity-50">
+              <h2 className="text-2xl font-serif mb-2">Welcome to your CMS Dashboard</h2>
+              <p className="text-neutral-600">
+                Configure Supabase to manage your content, track performance, and grow your audience.
+              </p>
+            </div>
+
+            {/* Disabled Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 opacity-50">
+              {statCards.map((stat) => {
+                const Icon = stat.icon;
+                return (
+                  <div
+                    key={stat.title}
+                    className="bg-white p-6 rounded-lg shadow-sm"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">{stat.title}</p>
+                        <p className="text-2xl font-semibold text-gray-900">--</p>
+                      </div>
+                      <div className="p-3 bg-neutral-100 rounded-full">
+                        <Icon size={24} className="text-neutral-600" />
+                      </div>
+                    </div>
+                    <div className="mt-4 flex items-center">
+                      <span className="text-sm font-medium text-gray-600">--</span>
+                      <span className="text-sm text-gray-500 ml-2">Configure Supabase</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </AdminLayout>
       </AuthGuard>

@@ -4,39 +4,49 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Check if environment variables are set
-if (!supabaseUrl) {
-  console.error('Missing VITE_SUPABASE_URL environment variable');
+if (!supabaseUrl || supabaseUrl === 'your_supabase_project_url') {
+  console.error('❌ Missing or invalid VITE_SUPABASE_URL environment variable');
+  console.log('Please set your Supabase URL in the .env file');
 }
 
-if (!supabaseAnonKey) {
-  console.error('Missing VITE_SUPABASE_ANON_KEY environment variable');
+if (!supabaseAnonKey || supabaseAnonKey === 'your_supabase_anon_key') {
+  console.error('❌ Missing or invalid VITE_SUPABASE_ANON_KEY environment variable');
+  console.log('Please set your Supabase Anon Key in the .env file');
 }
 
-// Create a fallback client if env vars are missing (for development)
-const fallbackUrl = 'https://placeholder.supabase.co';
-const fallbackKey = 'placeholder-key';
-
-export const supabase = createClient(
-  supabaseUrl || fallbackUrl, 
-  supabaseAnonKey || fallbackKey,
-  {
+// Only create client if we have valid environment variables
+if (!supabaseUrl || !supabaseAnonKey || 
+    supabaseUrl === 'your_supabase_project_url' || 
+    supabaseAnonKey === 'your_supabase_anon_key') {
+  console.error('🚫 Supabase not configured. Please update your .env file with valid credentials.');
+  console.log('📝 Instructions:');
+  console.log('1. Go to https://supabase.com/dashboard');
+  console.log('2. Select your project');
+  console.log('3. Go to Settings > API');
+  console.log('4. Copy your Project URL and anon/public key');
+  console.log('5. Update the .env file with these values');
+  
+  // Create a dummy client to prevent crashes
+  export const supabase = createClient('https://placeholder.supabase.co', 'placeholder-key');
+} else {
+  export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
     }
-  }
-);
+  });
 
-// Test the connection
-supabase.auth.getSession().then(({ data, error }) => {
-  if (error) {
-    console.error('Supabase connection error:', error.message);
-  } else {
-    console.log('Supabase connected successfully');
-  }
-}).catch(err => {
-  console.error('Failed to test Supabase connection:', err);
-});
+  // Test the connection only if we have valid credentials
+  supabase.auth.getSession().then(({ data, error }) => {
+    if (error) {
+      console.error('❌ Supabase connection error:', error.message);
+    } else {
+      console.log('✅ Supabase connected successfully');
+    }
+  }).catch(err => {
+    console.error('❌ Failed to test Supabase connection:', err);
+  });
+}
 
 // Database types
 export interface Database {
