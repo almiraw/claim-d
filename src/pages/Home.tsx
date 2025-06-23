@@ -28,7 +28,7 @@ const Home: React.FC = () => {
   return (
     <div className="pt-16">
       <HeroSection
-        title="Claim'd Fashion For Change"
+        title="Claim'D For Change"
         subtitle="Sustainable, ethical designs that push boundaries while respecting tradition."
         backgroundImage="https://images.pexels.com/photos/5384423/pexels-photo-5384423.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
         buttonText="Explore Collection"

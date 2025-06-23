@@ -27,7 +27,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
       }}
     >
       <div className="text-center px-4 max-w-3xl">
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif mb-6 leading-tight">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif mb-6 leading-tight text-red-600 font-bold">
           {title}
         </h1>
         <p className="text-lg md:text-xl mb-8 max-w-xl mx-auto text-neutral-100">
