@@ -8,9 +8,9 @@ const Logo: React.FC<LogoProps> = ({ variant = 'dark' }) => {
   return (
     <div className="flex items-center">
       <img 
-        src="/WhatsApp Image 2025-06-23 at 15.29.31.jpeg" 
+        src="/WhatsApp Image 2025-06-23 at 15.36.01.jpeg" 
         alt="Claim'D Logo" 
-        className="h-20 w-auto"
+        className="h-16 w-auto"
       />
     </div>
   );
