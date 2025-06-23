@@ -10,7 +10,7 @@ const Logo: React.FC<LogoProps> = ({ variant = 'dark' }) => {
       <img 
         src="/WhatsApp Image 2025-06-23 at 15.29.31.jpeg" 
         alt="Claim'D Logo" 
-        className="h-40 w-auto"
+        className="h-20 w-auto"
       />
     </div>
   );
