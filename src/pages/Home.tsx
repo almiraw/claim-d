@@ -26,7 +26,7 @@ const featuredCollections = [
 
 const Home: React.FC = () => {
   return (
-    <div className="pt-16">
+    <div className="pt-24">
       <HeroSection
         title="Fashion for Change"
         subtitle="Sustainable, ethical designs that push boundaries while respecting tradition."
