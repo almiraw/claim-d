@@ -40,16 +40,31 @@ const Home: React.FC = () => {
           <div className="flex flex-col md:flex-row">
             <div className="md:w-1/2 mb-8 md:mb-0 md:pr-12">
               <h2 className="text-3xl font-serif mb-6">Our Philosophy</h2>
-              <p className="text-neutral-700 leading-relaxed mb-6">
-                At RE_CLAIM.D, we believe fashion should be both beautiful and responsible. 
-                Our designs merge contemporary aesthetics with sustainable practices, 
-                creating pieces that stand the test of time.
-              </p>
-              <p className="text-neutral-700 leading-relaxed">
-                Each garment tells a story of conscious craftsmanship, innovative materials, 
-                and ethical production. We're reclaiming fashion's future by honoring its past 
-                and respecting our planet.
-              </p>
+              <div className="text-neutral-700 leading-relaxed space-y-4">
+                <p>
+                  At Claim'D, we believe fashion is more than what you wear — it's how you show up in the world. 
+                  It's your voice without words, your story without explanation.
+                </p>
+                <p>
+                  We're born from art. That means everything we do starts with expression — the kind that comes 
+                  from the heart, from rebellion, from wanting to make something that matters. Our pieces aren't 
+                  just made to look good — they're made to say something, to stand for something.
+                </p>
+                <p>
+                  We don't believe in fast trends or throwaway ideas. We believe in intention. In creating clothes 
+                  with meaning, made responsibly, and worn with purpose.
+                </p>
+                <p>
+                  Whether it's on the street, in a gallery, or at the edge of something new — we're here to 
+                  challenge what fashion can be.
+                </p>
+                <p className="font-medium">
+                  Claim'D is for those who think differently, live boldly, and care deeply.
+                </p>
+                <p className="font-medium">
+                  For the ones who don't just follow movements — they start them.
+                </p>
+              </div>
             </div>
             <div className="md:w-1/2">
               <img 
