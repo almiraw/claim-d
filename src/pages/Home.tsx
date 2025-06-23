@@ -29,7 +29,7 @@ const Home: React.FC = () => {
     <div className="pt-24">
       <HeroSection
         title="Fashion for Change"
-        subtitle="Sustainable, ethical designs that push boundaries while respecting tradition."
+        subtitle="Born from Art. Shaped by Purpose. Worn for Change."
         backgroundImage="https://images.pexels.com/photos/5384423/pexels-photo-5384423.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
         buttonText="Explore Collection"
         buttonLink="/portfolio"
