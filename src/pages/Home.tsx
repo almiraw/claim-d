@@ -26,7 +26,7 @@ const featuredCollections = [
 
 const Home: React.FC = () => {
   return (
-    <div className="pt-24">
+    <div className="pt-16">
       <HeroSection
         title="Fashion for Change"
         subtitle="Born from Art. Shaped by Purpose. Worn for Change."
